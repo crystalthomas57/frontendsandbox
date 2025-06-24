@@ -10,7 +10,7 @@
   </head>
   <body>
     <div class = "header">
-      <a href=" #default page" class = "logo"> ZOIE </a>
+      <!-- <a href=" #default page" class = "logo"> ZOIE </a> -->
       <div class=" header-right">
         <a href=" activer" href="#Home">Home</a>
         <a href="contact" >Contact</a>
@@ -32,17 +32,18 @@
      <!-- GET method shows all the infomation in the url the user sees and POST doesnt show data in url -->
       <!-- if no reason to show data in url to bookmark use a POST -->
       <!-- <form action = "" method = "" > -->
+        <button type ="button" onclick="saveData()"> Save </button>
+        
   <label for="username">Username: 
-
+  <br>
+  <input type="text" id="userInput" placeholder="username" ><br>
 
   <br>
-  <input type="text" id="uname" name="uname" ><br>
-  <label for="Password">Password:</label>
-  <br>
-  <input type="text" id="password" name="password" >
+  <input type="text" id="userInput" placeholder="username" ><br>
 </form>
 <div> 
-  
+  <h2> Saved Data:</h2>
+  <p id = "SavedData"> </p>
 </div>
     </center>
   </label>
