@@ -21,18 +21,18 @@
     <center>
         <!-- wraps information in a container -->
       <div class="container">
-        <h1><center>Login</center></h1>
+        <h1><center>Lookup student</center></h1>
         <img
           src="loginimage.jpeg"
           alt="Login Person"
         />
-        <div class="narrow-container" algin>
-      <div class="card"></div>
+        <!-- <div class="narrow-container" algin>
+      <div class="card"></div> -->
     <!-- in the method the action can be one of twp things GET or POST -->
      <!-- GET method shows all the infomation in the url the user sees and POST doesnt show data in url -->
       <!-- if no reason to show data in url to bookmark use a POST -->
       <!-- <form action = "" method = "" > -->
-        <button type ="button" onclick="saveData()"> Save </button>
+        <!-- <button type ="button" onclick="saveData()"> Save </button>
         
   <label for="username">Username: 
   <br>
@@ -45,6 +45,41 @@
   <h2> Saved Data:</h2>
   <p id = "SavedData"> </p>
 </div>
+<div>
+  <Response class="write">
+    Take the data from textbox and post to main py
+userInput - look up get value from DOM textbox
+  </Response>
+</div> -->
+<input type="text" id="student_id" placeholder="Enter Student ID">
+<button onclick="sendData()">Submit</button>
+
+<h2>Response:</h2>
+<pre id="responseBox"></pre>
+
+<script>
+    function sendData() {
+        const student_id = document.getElementById('student_id').value;
+
+        fetch('/query', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ student_id: student_id })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Request failed');
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('responseBox').textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('responseBox').textContent = 'Request failed';
+        });
+    }
+</script>
+
     </center>
   </label>
   </body>
