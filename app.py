@@ -1,7 +1,11 @@
+# querying a MySQL database from a web interface using Flask as the backend.
+
 from flask import Flask, request, jsonify, render_template
 import mysql.connector as sqlconn
 
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app)
 
 # Function to connect to database
 def get_db_connection():
@@ -17,6 +21,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/query', methods=['POST'])
+
 def query_db():
     data = request.get_json()
     student_id = data.get('student_id')
@@ -28,9 +33,9 @@ def query_db():
 
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
-        sql = "SELECT * FROM students WHERE student_id = %s"
+        sql = "SELECT * FROM student WHERE student_id = %s"
         cursor.execute(sql, (student_id,))
         result = cursor.fetchone()
 
