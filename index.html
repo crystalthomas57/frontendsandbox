@@ -50,16 +50,44 @@
 userInput - look up get value from DOM textbox
   </Response>
 </div> -->
-<input type="text" id="student_id" placeholder="Enter Student ID">
-<button onclick="sendData()">Submit</button>
+<input type="text" id="student_id" placeholder="Enter student ID">
+<button onclick="getStudent()">Search</button>
+<pre id="result"></pre>
 
 <h2>Response:</h2>
-<pre id="responseBox"></pre>
+<pre id="Student Info"></pre>
+
 
 <script>
-    function sendData() {
-        const student_id = document.getElementById('student_id').value;
+  function getStudent() {
+    const studentId = document.getElementById('student_id');
+    var mystudent = studentId.value;
+    studentId.setAttribute = "chris";
+    const formData = new FormData();
+    formData.append('student_id', mystudent);
+   
+    fetch('http://localhost:5500/get_student_by_id?student_id=' + mystudent, {
+        method: 'GET'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('result').textContent = 'Error retrieving student data.';
+    });
+}
 
+
+    function sendData() {
+        const studentId = document.getElementById('student_id').value;
+        <!-- formData.append("student_id", studentId); -->
         fetch('/query', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -67,7 +95,7 @@ userInput - look up get value from DOM textbox
         })
         .then(response => {
             if (!response.ok) throw new Error('Request failed');
-            return response.json();
+            return "my script failed";
         })
         .then(data => {
           if (data.student) {
@@ -85,7 +113,47 @@ userInput - look up get value from DOM textbox
             document.getElementById('responseBox').textContent = 'Request failed';
         });
     }
+
+  async function fetchStudentById(studentId) {
+  try {
+    const response = await fetch('http://localhost:5000/query', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: (student_id )
+
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Unknown error occurred');
+    }
+
+    const data = await response.json();
+    console.log('Student Data:', data);
+    const myElement = document.getElementById(student_div)
+    myElement.innerHTML = data
+
+    // Optionally, display data on the page
+    if (data.student) {
+      document.getElementById('result').textContent = JSON.stringify(data.student, null, 2);
+    } else {
+      document.getElementById('result').textContent = data.message;
+    }
+
+  } catch (error) {
+    console.error('Fetch error:', error);
+    document.getElementById('result').textContent = 'Error: ' + error.message;
+  }
+}
+
 </script>
+
+<!-- Here's a corrected and working version of your JavaScript 
+ inside the existing HTML to properly send the student_id 
+ to your Python backend (/query) and display the result: -->
+ 
 
     </center>
   </label>

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3 
 # querying a MySQL database from a web interface using Flask as the backend.
 
 from flask import Flask, request, jsonify, render_template
@@ -6,7 +7,7 @@ import mysql.connector as sqlconn
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
-
+    
 # Function to connect to database
 def get_db_connection():
     return sqlconn.connect(
@@ -20,9 +21,10 @@ def get_db_connection():
 def index():
     return render_template('index.html')
 
-@app.route('/query', methods=['POST'])
 
-def query_db():
+@app.route('/query', methods=['POST'])
+def query_db(id):
+    # How do I connect to mysql and query a table with an id
     data = request.get_json()
     student_id = data.get('student_id')
 
@@ -53,6 +55,35 @@ def query_db():
     finally:
         cursor.close()
         conn.close()
+
+@app.route('/christest', methods=['GET'])
+def christest():
+      return "yes i made it"
+    
+@app.route('/get_student_by_id', methods=['GET'])
+def get_student_by_id():
+    s_id = request.args.get('student_id')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        query = "SELECT * FROM student WHERE student_id = %s"
+        cursor.execute(query, (s_id,))
+        result = cursor.fetchone()
+
+        if result:
+            # print("Student Found:", result)
+            return result
+        else:
+            print("No student found with ID", s_id)
+
+    except sqlconn.Error as err:
+        print("Error:", err)
+    finally:
+        cursor.close()
+        conn.close()
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
