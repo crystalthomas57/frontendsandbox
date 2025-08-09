@@ -4,69 +4,134 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Page</title>
-
-     <!-- needed to import the style.css file -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"> </script>
+     <!-- import the style.css file -->
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class = "header">
+    <!-- Input of a navigation bar or header bar at the top-->
+     
+    <!-- <div class = "header">
       <div class=" header-right">
         <a href="#home">Home</a>
         <a href="database" >Database</a>
         <a href=" about">About</a>
-      </div> 
+      </div>  -->
 
     </div>
     <center>
         <!-- wraps information in a container -->
       <div class="container">
-        <h1><center>Lookup student</center></h1>
+        <h1><center>Create Account</center></h1>
         <img
           src="loginimage.jpeg"
           alt="Login Person"
         />
-        <!-- <div class="narrow-container" algin>
-      <div class="card"></div> -->
-    <!-- in the method the action can be one of twp things GET or POST -->
-     <!-- GET method shows all the infomation in the url the user sees and POST doesnt show data in url -->
-      <!-- if no reason to show data in url to bookmark use a POST -->
-      <!-- <form action = "" method = "" > -->
-        <!-- <button type ="button" onclick="saveData()"> Save </button>
-        
-  <label for="username">Username: 
-  <br>
-  <input type="text" id="userInput" placeholder="username" ><br>
 
-  <br>
-  <input type="text" id="userInput" placeholder="username" ><br>
-</form>
-<div> 
-  <h2> Saved Data:</h2>
-  <p id = "SavedData"> </p>
-</div>
-<div>
-  <Response class="write">
-    Take the data from textbox and post to main py
-userInput - look up get value from DOM textbox
-  </Response>
-</div> -->
-<input type="text" id="student_id" placeholder="Enter student ID">
-<button onclick="getStudent()">Search</button>
-<pre id="result"></pre>
+<!-- <input type="text" id="inputValue" placeholder="Enter student ID">
+<button id='sendButton'>Search</button>
+<pre id="result"></pre> -->
+
+<!-- HTML Added to make CreateUser button added by CJT work-->
+
+ <div style="vertical-align: auto;" id="section_createuser">
+    <input type="text" id="username" placeholder="Username">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <input type="text" id="Occupation" placeholder="Occupation">
+
+    <button id="btncreateuser">Create User</button>
+  </div>
+
 
 <h2>Response:</h2>
-<pre id="Student Info"></pre>
+<pre id="CreateUser Form"></pre>
 
 
 <script>
-  function getStudent() {
-    const studentId = document.getElementById('student_id');
-    var mystudent = studentId.value;
-    studentId.setAttribute = "chris";
-    const formData = new FormData();
-    formData.append('student_id', mystudent);
+  /* CJT cleaned up jquery method listening to click event of the buton named sendbutton*/
+    $(document).ready(function() {
+        $('#sendButton').click(function() {
+            const inputValue = $('#inputValue').val();
+            //fetchStudent(inputValue); //CJT added to test 8-4-2025
+            getStudent(inputValue);
+        });
+      /* Adding here to take advantage of the Document Ready function wrapper already in place.
+          another clicked event this time as a javascript listener to a DOM Element Button vs above jquery on click function*/
+          //Crystal add the html to make this function work
+        var btn_createuser = document.getElementById("btncreateuser");
+          
+          bbtn_createuser.addEventListener('click', function() {
+          createUser();     
+        });
+    });
+
+      /* CJT added Create user javascript function it will get all the fields in the div with id of section_createuser
+      and post the data to a python creatuser endpoint acception posts. 
+      
+      Crystal Read this function and build the HTML Next Create a python Endpoint that accepts a post
+      and inserts this data into the database */
+
+  function createUser() {
+    // Collect data from inputs inside #section_createuser
+    const section = document.getElementById('section_createuser');
+    const userData = {
+        username: section.querySelector('#username').value,
+        email: section.querySelector('#email').value,
+        password: section.querySelector('#password').value,
+        occupation: section.querySelector('#occupation').value,
+        notes: section.querySelector('#notes').value
+    };
+
+    // Send POST request to your Python service endpoint
+    fetch('http://127.0.0.1:5000/CreateUser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('User created successfully:', data);
+        alert('User created successfully!');
+    })
+    .catch(error => {
+        console.error('Error creating user:', error);
+        alert('Failed to create user.');
+    });
+}
+  function fetchStudent(i) {
+    //const studentId = document.getElementById("student_id").value;
+    const url = "http://127.0.0.1:5000/get_student_by_id?student_id=" + i;
+
+    try {
+          const response = fetch(url, {
+              method: 'GET',
+              mode: 'cors',             // ✅ Enables CORS request
+              headers: {
+                  'Accept': 'application/json'
+              }
+          });
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const data = response.json();
+       // document.getElementById("responseBox").textContent = JSON.stringify(data, null, 2);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+  }
+  function getStudent(i) {
+   /*/ const formData = new FormData();
+    formData.append('student_id', mystudent); */
    
-    fetch('http://localhost:5500/get_student_by_id?student_id=' + mystudent, {
+    fetch('http://127.0.0.1:5000/get_student_by_id?student_id=' + i, {
         method: 'GET'
     })
     .then(response => {
@@ -114,7 +179,7 @@ userInput - look up get value from DOM textbox
         });
     }
 
-  async function fetchStudentById(studentId) {
+ /*/ async function fetchStudentById(studentId) {
   try {
     const response = await fetch('http://localhost:5000/query', {
       method: 'POST',
@@ -147,7 +212,7 @@ userInput - look up get value from DOM textbox
     document.getElementById('result').textContent = 'Error: ' + error.message;
   }
 }
-
+*/
 </script>
 
 <!-- Here's a corrected and working version of your JavaScript 
