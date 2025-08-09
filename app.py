@@ -79,9 +79,9 @@ def query_db(id):
         cursor.close()
         conn.close()
 
-@app.route('/christest', methods=['GET'])
-def christest():
-      return "yes i made it"
+# @app.route('/christest', methods=['GET'])
+# def christest():
+#       return "yes i made it"
     
 @app.route('/get_student_by_id', methods=['GET'])
 def get_student_by_id():
@@ -112,3 +112,40 @@ def get_student_by_id():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+@app.route('/createuser', methods=['POST'])
+def create_user():
+    data = request.get_json()
+
+    user_id = data.get('user_id')
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+    occupation = data.get('occupation')
+
+    # Basic validation
+    if not all([user_id, username, email, password, occupation]):
+        return jsonify({'error': 'Missing one or more required fields'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        sql = """
+            INSERT INTO NewUser (user_id, username, email, password, occupation)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        cursor.execute(sql, (user_id, username, email, password, occupation))
+        conn.commit()
+
+        return jsonify({'message': 'User created successfully'}), 201
+
+    except Exception as e:
+        print(f"Database error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()

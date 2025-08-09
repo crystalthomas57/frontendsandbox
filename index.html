@@ -34,21 +34,77 @@
 
 <!-- HTML Added to make CreateUser button added by CJT work-->
 
- <div style="vertical-align: auto;" id="section_createuser">
+ <div id="section_createuser">
     <input type="text" id="username" placeholder="Username">
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
-    <input type="text" id="Occupation" placeholder="Occupation">
+    <input type="text" id="occupation" placeholder="Occupation">
 
     <button id="btncreateuser">Create User</button>
   </div>
 
-
 <h2>Response:</h2>
-<pre id="CreateUser Form"></pre>
-
+<pre id="responseDisplay"></pre>
 
 <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn_createuser = document.getElementById("btncreateuser");
+
+    btn_createuser.addEventListener('click', function() {
+      createUser();
+    });
+  });
+
+  function createUser() {
+    const section = document.getElementById('section_createuser');
+
+    const userData = {
+        user_id: generateUserId(), // if your backend expects a user_id
+        username: section.querySelector('#username').value.trim(),
+        email: section.querySelector('#email').value.trim(),
+        password: section.querySelector('#password').value,
+        occupation: section.querySelector('#occupation').value.trim()
+    };
+
+    // Simple validation
+    if (!userData.username || !userData.email || !userData.password || !userData.occupation) {
+      alert('Please fill all fields!');
+      return;
+    }
+   
+    fetch('http://127.0.0.1:5000/createuser', {  // Match your Flask endpoint URL here
+        method: 'POST',
+         mode: 'cors',
+        headers: {
+          
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Server response:', data);
+        document.getElementById('responseDisplay').textContent = JSON.stringify(data, null, 2);
+        if(data.message) {
+          alert('User created successfully!');
+        } else if(data.error) {
+          alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+      console.error('Error creating user:', error);
+        alert('Failed to create user.');
+    });
+  }
+
+  // Optional: Simple function to generate a random user ID (if needed)
+  function generateUserId() {
+    return 'user_' + Math.floor(Math.random() * 1000000);
+  }
+</script>
+
+
+<!-- <script>
   /* CJT cleaned up jquery method listening to click event of the buton named sendbutton*/
     $(document).ready(function() {
         $('#sendButton').click(function() {
@@ -80,7 +136,6 @@
         email: section.querySelector('#email').value,
         password: section.querySelector('#password').value,
         occupation: section.querySelector('#occupation').value,
-        notes: section.querySelector('#notes').value
     };
 
     // Send POST request to your Python service endpoint
@@ -152,7 +207,7 @@
 
     function sendData() {
         const studentId = document.getElementById('student_id').value;
-        <!-- formData.append("student_id", studentId); -->
+        formData.append("student_id", studentId);
         fetch('/query', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -179,7 +234,7 @@
         });
     }
 
- /*/ async function fetchStudentById(studentId) {
+  async function fetchStudentById(studentId) {
   try {
     const response = await fetch('http://localhost:5000/query', {
       method: 'POST',
@@ -212,14 +267,7 @@
     document.getElementById('result').textContent = 'Error: ' + error.message;
   }
 }
-*/
-</script>
-
-<!-- Here's a corrected and working version of your JavaScript 
- inside the existing HTML to properly send the student_id 
- to your Python backend (/query) and display the result: -->
- 
-
+</script> -->
     </center>
   </label>
   </body>
