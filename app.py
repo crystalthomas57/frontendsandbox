@@ -1,30 +1,12 @@
 #!/usr/bin/env python3 
-
 # querying a MySQL database from a web interface using Flask as the backend.
+
 from flask import Flask, request, jsonify, render_template
 import mysql.connector as sqlconn
 
-# By default, browsers block JavaScript running on one domain 
-# (e.g., http://localhost:5500) from making requests to another domain 
-# (e.g., http://127.0.0.1:5000).This is called the same-origin policy.
-# If you want your frontend to talk to your backend from a different origin, 
-# you need to enable CORS
 from flask_cors import CORS
-
 app = Flask(__name__)
-
-#cjt added 8-4-2025
-@app.after_request
-def apply_cors(response):
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-    response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    return response
-
-#CORS(app)
-
-#CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET"])
+CORS(app)
     
 # Function to connect to database
 def get_db_connection():
@@ -34,16 +16,11 @@ def get_db_connection():
         password="password",
         database="CrystalsPracticeDB"
     )
-# @app.route('/') is a decorator that tells Flask:
-# "When the user accesses / (the home page), 
-# run the function right below this."
-# def index(): is the function that will run when the / route is requested.
-# render_template('index.html') tells Flask to:
-# Look in your templates/ folder for a file called index.html.
-# Render it and send it back as the HTTP response to the browser.
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/query', methods=['POST'])
 def query_db(id):
@@ -88,16 +65,14 @@ def get_student_by_id():
     s_id = request.args.get('student_id')
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-        
+
     try:
-        print("Chris made it here")
-         
         query = "SELECT * FROM student WHERE student_id = %s"
         cursor.execute(query, (s_id,))
         result = cursor.fetchone()
 
         if result:
-            print("Student Found:", result)
+            # print("Student Found:", result)
             return result
         else:
             print("No student found with ID", s_id)

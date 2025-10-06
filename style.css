@@ -77,13 +77,4 @@ label {
   font-size: 18px;
   line-height: 25px;
   border-radius: 4px;
-
-  .container2 {
-  align-items: center;
-  display: flex; /* Make the container a flex container */
-  flex-direction: column; /* Arrange items in a column (vertically) */
-  justify-content: flex-end; /* Align items to the end (bottom) of the container */
-  height: 200px; /* Set a height for the container to see the effect */
-  border: 1px solid black;
-}
 }
