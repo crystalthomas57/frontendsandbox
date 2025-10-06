@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
+    <!--meta bs-->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- unnessesary title tag-->
     <title>Login Page</title>
+    <!--script tags are used to refference javascript code.
+    this tag loads the jQuery library from 
+    Google’s public Content Delivery Network (CDN)-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"> </script>
      <!-- import the style.css file -->
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
-    <!-- Input of a navigation bar or header bar at the top-->
-     
+    <!-- This div is an input of a navigation bar or header bar at the top-->
     <!-- <div class = "header">
       <div class=" header-right">
         <a href="#home">Home</a>
@@ -34,14 +40,29 @@
 
 <!-- HTML Added to make CreateUser button added by CJT work-->
 
- <div id="section_createuser">
+ <!-- <div id="section_createuser">
     <input type="text" id="username" placeholder="Username">
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
     <input type="text" id="occupation" placeholder="Occupation">
 
     <button id="btncreateuser">Create User</button>
-  </div>
+  </div> -->
+  <div class="container" id="section_createuser">
+      <div class="center" id="createuser">
+          <form action="" method="POST" id="createuser">
+              <div class="txt_field" id="createuser">
+                  <input type="text" id ="username" name="text" placeholder="UserName">
+                  <span></span>
+                  <input type="email" id="email" placeholder="Email">
+                  <span></span>
+                  <input type="password" id="password" placeholder="Password">
+                  <span></span>
+                  <input type="text" id="occupation" placeholder="Occupation">
+                  <span></span>
+                  <button id="btncreateuser" type="button"> Create NewUser</button>
+                  <span></span>
+              </div>
 
 <h2>Response:</h2>
 <pre id="responseDisplay"></pre>
@@ -50,8 +71,9 @@
   document.addEventListener('DOMContentLoaded', function() {
     var btn_createuser = document.getElementById("btncreateuser");
 
-    btn_createuser.addEventListener('click', function() {
-      createUser();
+   btn_createuser.addEventListener('click', function(event) {
+  event.preventDefault(); // Stop form from reloading
+  createUser();
     });
   });
 
@@ -71,12 +93,11 @@
       alert('Please fill all fields!');
       return;
     }
-   
-    fetch('http://127.0.0.1:5000/createuser', {  // Match your Flask endpoint URL here
+  
+    fetch('http://127.0.0.1:5000/create_user', {  // Match your Flask endpoint URL here
         method: 'POST',
-         mode: 'cors',
         headers: {
-          
+            'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
         body: JSON.stringify(userData)
